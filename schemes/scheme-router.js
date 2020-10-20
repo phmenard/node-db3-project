@@ -1,33 +1,30 @@
 const express = require('express');
+const { orWhereNotExists } = require('../data/config.js');
 
 const Schemes = require('./scheme-model.js');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  Schemes.find()
-  .then(schemes => {
-    res.json(schemes);
-  })
-  .catch(err => {
-    res.status(500).json({ message: 'Failed to get schemes' });
-  });
+router.get('/', async (req, res, next) => {
+  try {
+    const  schemes = await Schemes.find()
+    res.json(schemes)
+  }catch(err){
+    //res.status(500).json({ message: 'Failed to get schemes' });
+    next(err)
+  }
+   
 });
 
-router.get('/:id', (req, res) => {
-  const { id } = req.params;
+router.get('/:id', async (req, res, next) => {
+  try {
+    const scheme = await Schemes.findById(req.params.id)
+    res.status(200).json(scheme)
+  }catch(err){
+    //res.status(404).json({ message: 'Could not find scheme with given id.' })
+    next(err)
+  }
 
-  Schemes.findById(id)
-  .then(scheme => {
-    if (scheme) {
-      res.json(scheme);
-    } else {
-      res.status(404).json({ message: 'Could not find scheme with given id.' })
-    }
-  })
-  .catch(err => {
-    res.status(500).json({ message: 'Failed to get schemes' });
-  });
 });
 
 router.get('/:id/steps', (req, res) => {
