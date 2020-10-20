@@ -18,7 +18,11 @@ function findSteps(id) {
 }
 
 function add(schemeData) {
-
+    return db("schemes").insert(schemeData)
+        
+    
+    
+    //return db("schemes").where({id}).first()
 }
 
 function remove(id) {

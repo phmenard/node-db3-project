@@ -37,21 +37,21 @@ router.get('/:id/steps', async (req, res, next) => {
       
     }
   }catch(err){
-    //res.status(500).json({ message: 'Failed to get steps' });
-    next(err)
+    res.status(500).json({ message: 'Failed to get steps' });
+    //next(err)
   }
 });
 
-router.post('/', (req, res) => {
-  const schemeData = req.body;
-
-  Schemes.add(schemeData)
-  .then(scheme => {
+router.post('/', async (req, res, next) => {
+  try {
+    const schemeData = req.body;
+    const id = await Schemes.add(schemeData)
+    const scheme = await Schemes.findById(id)
     res.status(201).json(scheme);
-  })
-  .catch (err => {
-    res.status(500).json({ message: 'Failed to create new scheme' });
-  });
+  }catch(err) {
+    //res.status(500).json({ message: 'Failed to create new scheme' });
+    next(err)
+  }
 });
 
 router.post('/:id/steps', (req, res) => {
