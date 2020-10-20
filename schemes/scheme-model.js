@@ -17,12 +17,20 @@ function findSteps(id) {
         .orderBy("st.step_number")
 }
 
+function addStep(stepData) {
+    return db("steps").insert(stepData)
+}
+
 function add(schemeData) {
     return db("schemes").insert(schemeData)
         
     
     
     //return db("schemes").where({id}).first()
+}
+
+function update(schemeData, id) {
+
 }
 
 function remove(id) {
@@ -34,5 +42,7 @@ module.exports = {
     findById,
     findSteps,
     add,
+    addStep,
+    update,
     remove,
 }
