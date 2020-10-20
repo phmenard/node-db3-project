@@ -59,15 +59,15 @@ router.post('/:id/steps', async (req, res, next) => {
     const stepData = req.body;
     const { id } = req.params;
 
-    const scheme = Schemes.findById(id)
+    const scheme = await Schemes.findById(id)
     if (scheme) {
-      
+
       const step = {
         step_number: stepData.step_number,
         instructions: stepData.instructions,
         scheme_id: id
       }
-      
+
       const newStep = await Schemes.addStep(step)
       res.status(201).json(newStep);
     } else {
@@ -80,40 +80,40 @@ router.post('/:id/steps', async (req, res, next) => {
 
 });
 
-router.put('/:id', (req, res) => {
-  const { id } = req.params;
-  const changes = req.body;
+router.put('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const changes = req.body;
 
-  Schemes.findById(id)
-    .then(scheme => {
-      if (scheme) {
-        Schemes.update(changes, id)
-          .then(updatedScheme => {
-            res.json(updatedScheme);
-          });
-      } else {
-        res.status(404).json({ message: 'Could not find scheme with given id' });
-      }
-    })
-    .catch(err => {
-      res.status(500).json({ message: 'Failed to update scheme' });
-    });
+    const scheme = await Schemes.findById(id)
+    if (scheme) {
+      const updatedScheme = await Schemes.update(changes, id)
+      res.json(updatedScheme);
+
+    } else {
+      res.status(404).json({ message: 'Could not find scheme with given id' });
+    }
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to update scheme' });
+    next(err)
+  }
 });
 
-router.delete('/:id', (req, res) => {
-  const { id } = req.params;
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const deleted = await Schemes.remove(id)
+    if (deleted) {
+      res.json({ removed: deleted });
+    } else {
+      res.status(404).json({ message: 'Could not find scheme with given id' });
+    }
 
-  Schemes.remove(id)
-    .then(deleted => {
-      if (deleted) {
-        res.json({ removed: deleted });
-      } else {
-        res.status(404).json({ message: 'Could not find scheme with given id' });
-      }
-    })
-    .catch(err => {
-      res.status(500).json({ message: 'Failed to delete scheme' });
-    });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete scheme' });
+    next(error)
+  }
+
 });
 
 module.exports = router;

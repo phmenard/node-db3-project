@@ -23,18 +23,16 @@ function addStep(stepData) {
 
 function add(schemeData) {
     return db("schemes").insert(schemeData)
-        
-    
-    
-    //return db("schemes").where({id}).first()
 }
 
 function update(schemeData, id) {
-
+    return db("schemes").update(schemeData)
+        .where("id", id)
 }
 
 function remove(id) {
-
+    return db("schemes").del()
+        .where("id", id)
 }
 
 module.exports = {
