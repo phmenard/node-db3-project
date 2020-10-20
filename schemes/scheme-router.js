@@ -27,20 +27,19 @@ router.get('/:id', async (req, res, next) => {
 
 });
 
-router.get('/:id/steps', (req, res) => {
-  const { id } = req.params;
-
-  Schemes.findSteps(id)
-  .then(steps => {
+router.get('/:id/steps', async (req, res, next) => {
+  try {
+    const steps = await Schemes.findSteps(req.params.id)
     if (steps.length) {
       res.json(steps);
     } else {
       res.status(404).json({ message: 'Could not find steps for given scheme' })
+      
     }
-  })
-  .catch(err => {
-    res.status(500).json({ message: 'Failed to get steps' });
-  });
+  }catch(err){
+    //res.status(500).json({ message: 'Failed to get steps' });
+    next(err)
+  }
 });
 
 router.post('/', (req, res) => {
