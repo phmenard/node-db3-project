@@ -10,7 +10,11 @@ function findById(schemeId){
 }
 
 function findSteps(id) {
-
+    return db("steps as st")
+        .innerJoin("schemes as sc", "sc.id", "st.scheme_id")
+        .where("st.scheme_id", id)
+        .select("st.id", "sc.scheme_name", "st.step_number", "st.instructions")
+        .orderBy("st.step_number")
 }
 
 function add(schemeData) {
